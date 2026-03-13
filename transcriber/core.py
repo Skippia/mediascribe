@@ -70,13 +70,39 @@ def transcribe(input_path: Path, model_size: str = "medium", language: str | Non
 
     lines.append("## Content\n")
 
+    # Collect all segments, then merge into coherent paragraphs.
+    # A new paragraph starts when there's a pause > 1.5s between segments
+    # or the previous segment ended with sentence-ending punctuation.
+    PAUSE_THRESHOLD = 1.5
+    paragraphs: list[str] = []
+    current_parts: list[str] = []
+    current_ts: float = 0.0
+    prev_end: float = 0.0
+
     for segment in segments:
         text = segment.text.strip()
         if not text:
             continue
+
+        gap = segment.start - prev_end if prev_end > 0 else 0.0
+        ends_sentence = current_parts and current_parts[-1][-1:] in ".!?"
+
+        if current_parts and (gap > PAUSE_THRESHOLD or ends_sentence):
+            paragraphs.append((" ".join(current_parts), current_ts))
+            current_parts = []
+            current_ts = segment.start
+
+        if not current_parts:
+            current_ts = segment.start
+        current_parts.append(text)
+        prev_end = segment.end
+
+    if current_parts:
+        paragraphs.append((" ".join(current_parts), current_ts))
+
+    for text, ts in paragraphs:
         if timestamps:
-            ts = format_timestamp(segment.start)
-            lines.append(f"**[{ts}]** {text}\n")
+            lines.append(f"**[{format_timestamp(ts)}]** {text}\n")
         else:
             lines.append(f"{text}\n")
 
