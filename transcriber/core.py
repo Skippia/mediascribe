@@ -7,7 +7,17 @@ from pathlib import Path
 from faster_whisper import BatchedInferencePipeline, WhisperModel
 
 
-SUPPORTED_EXTENSIONS = {".mp4", ".mkv", ".webm", ".avi", ".mov", ".flv", ".wmv", ".mp3", ".wav", ".flac", ".ogg", ".m4a"}
+AUDIO_EXTENSIONS = {
+    ".mp3", ".wav", ".flac", ".ogg", ".m4a",
+    ".aac", ".opus", ".wma", ".aiff", ".aif",
+    ".amr", ".ape", ".ac3", ".dts", ".mka",
+}
+VIDEO_EXTENSIONS = {
+    ".mp4", ".mkv", ".webm", ".avi", ".mov", ".flv", ".wmv", ".divx",
+    ".ts", ".m2ts", ".mts", ".mpg", ".mpeg", ".3gp", ".m4v",
+    ".vob", ".ogv", ".asf",
+}
+SUPPORTED_EXTENSIONS = AUDIO_EXTENSIONS | VIDEO_EXTENSIONS
 
 BAR_WIDTH = 30
 PAUSE_THRESHOLD = 1.5
@@ -69,8 +79,7 @@ def transcribe(input_path: Path, model_size: str = "medium", language: str | Non
         print(f"Supported: {', '.join(sorted(SUPPORTED_EXTENSIONS))}", file=sys.stderr)
         sys.exit(1)
 
-    audio_extensions = {".mp3", ".wav", ".flac", ".ogg", ".m4a"}
-    is_audio = input_path.suffix.lower() in audio_extensions
+    is_audio = input_path.suffix.lower() in AUDIO_EXTENSIONS
 
     if model is None:
         model = load_model(model_size)
