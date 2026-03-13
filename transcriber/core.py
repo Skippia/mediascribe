@@ -62,7 +62,7 @@ def load_model(model_size: str = "medium") -> BatchedInferencePipeline:
     return pipeline
 
 
-def transcribe(input_path: Path, model_size: str = "medium", language: str | None = None, timestamps: bool = False, model: BatchedInferencePipeline | None = None) -> str:
+def transcribe(input_path: Path, model_size: str = "medium", language: str | None = None, timestamps: bool = False, model: BatchedInferencePipeline | None = None, batch_size: int = 4) -> str:
     """Transcribe a video/audio file and return markdown content."""
     if input_path.suffix.lower() not in SUPPORTED_EXTENSIONS:
         print(f"Unsupported format: {input_path.suffix}", file=sys.stderr)
@@ -93,7 +93,7 @@ def transcribe(input_path: Path, model_size: str = "medium", language: str | Non
     segments, info = model.transcribe(
         audio_file,
         language=language,
-        batch_size=16,
+        batch_size=batch_size,
         vad_filter=True,
         vad_parameters={"min_silence_duration_ms": 500},
     )

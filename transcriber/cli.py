@@ -6,7 +6,7 @@ from pathlib import Path
 from transcriber.core import SUPPORTED_EXTENSIONS, format_timestamp, load_model, transcribe
 
 
-def transcribe_file(input_path: Path, output_path: Path, model, language: str | None, timestamps: bool) -> float:
+def transcribe_file(input_path: Path, output_path: Path, model, language: str | None, timestamps: bool, batch_size: int) -> float:
     """Transcribe a single file. Returns elapsed time in seconds."""
     t = time.monotonic()
     result = transcribe(
@@ -14,6 +14,7 @@ def transcribe_file(input_path: Path, output_path: Path, model, language: str | 
         model=model,
         language=language,
         timestamps=timestamps,
+        batch_size=batch_size,
     )
     output_path.write_text(result, encoding="utf-8")
     print(f"  💾 Saved: {output_path.name}")
@@ -36,6 +37,8 @@ def main() -> None:
                         help="Whisper model size (default: medium)")
     parser.add_argument("-l", "--language", default=None, help="Language code, e.g. 'en', 'uk', 'ru' (default: auto-detect)")
     parser.add_argument("--timestamps", action="store_true", help="Include timestamps in output (off by default)")
+    parser.add_argument("-b", "--batch-size", type=int, default=4,
+                        help="Batch size for inference — lower = less RAM (default: 4)")
 
     args = parser.parse_args()
 
@@ -48,7 +51,7 @@ def main() -> None:
     if args.input.is_file():
         print(f"\n📄 {args.input.name}")
         output_path = args.output or args.input.with_suffix(".md")
-        elapsed = transcribe_file(args.input, output_path, model, args.language, args.timestamps)
+        elapsed = transcribe_file(args.input, output_path, model, args.language, args.timestamps, args.batch_size)
         print(f"\n{'─' * 50}")
         print(f"✅ All done in {format_timestamp(elapsed)}")
     elif args.input.is_dir():
@@ -77,7 +80,7 @@ def main() -> None:
                 continue
             processed += 1
             print(f"\n🎬 [{i}/{total}] {f.name}")
-            transcribe_file(f, output_path, model, args.language, args.timestamps)
+            transcribe_file(f, output_path, model, args.language, args.timestamps, args.batch_size)
 
         elapsed_total = time.monotonic() - t_total
         print(f"\n{'─' * 50}")
