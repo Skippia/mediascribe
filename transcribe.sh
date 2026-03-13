@@ -35,4 +35,4 @@ if [ $# -eq 0 ]; then
 fi
 
 cd "$SCRIPT_DIR"
-exec uv run transcribe "$@"
+exec uv run python -m transcriber.cli "$@"
