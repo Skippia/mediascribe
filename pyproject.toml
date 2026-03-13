@@ -1,5 +1,5 @@
 [project]
-name = "video-transcriber"
+name = "transcribe-offline"
 version = "1.0.0"
 description = "Transcribe video/audio files to markdown using faster-whisper"
 requires-python = ">=3.11"

@@ -1,4 +1,4 @@
-# video-transcriber
+# transcribe-offline
 
 > *Point at a video. Get a markdown transcript.*
 
@@ -60,7 +60,7 @@ Uploading videos to Gemini/ChatGPT for transcription is slow, manual, and uncomf
 
 ```bash
 # Clone the repo
-git clone https://github.com/Skippia/video-transcriber.git
+git clone https://github.com/Skippia/transcribe-offline.git
 cd video-transcriber
 
 # Make globally available
@@ -197,7 +197,7 @@ Folder:
 ## File Structure
 
 ```
-video-transcriber/
+transcribe-offline/
 ├── transcribe.sh          # Shell entry point (symlink this to ~/.local/bin/)
 ├── pyproject.toml         # Python project config & dependencies
 ├── transcriber/
