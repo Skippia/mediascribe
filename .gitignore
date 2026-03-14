@@ -8,3 +8,4 @@ build/
 *.tmp
 .uv/
 uv.lock
+.env

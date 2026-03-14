@@ -8,6 +8,11 @@
 #   ./transcribe.sh ./lectures/                # all videos in folder
 #   ./transcribe.sh video.mp4 -m small -l en
 #   ./transcribe.sh video.mp4 -o output.md --timestamps
+#   ./transcribe.sh --audio video.mp4            # extract .mp3 from video
+#   ./transcribe.sh --audio ./lectures/         # extract .mp3 from all videos (recursive)
+#   ./transcribe.sh video.mp4 --cloud           # cloud transcription via OpenRouter
+#   ./transcribe.sh ./lectures/ --cloud --concurrency 3
+#   ./transcribe.sh ./lectures/ --cloud --dry   # estimate cost without transcribing
 #
 set -euo pipefail
 
@@ -32,6 +37,13 @@ if [ $# -eq 0 ]; then
     echo "  -m, --model MODEL        tiny|base|small|medium|large-v3 (default: medium)"
     echo "  -l, --language LANG      Language code: en, uk, ru, etc. (default: auto)"
     echo "      --timestamps         Include timestamps in output"
+    echo "      --audio PATH         Extract .mp3 from video file or folder (recursive)"
+    echo ""
+    echo "Cloud transcription (OpenRouter):"
+    echo "      --cloud              Use cloud API instead of local Whisper"
+    echo "      --cloud-model MODEL  Cloud model (default: google/gemini-3-flash-preview)"
+    echo "      --concurrency N      Parallel cloud jobs (default: 5)"
+    echo "      --dry                Estimate cost without transcribing (requires --cloud)"
     exit 1
 fi
 
